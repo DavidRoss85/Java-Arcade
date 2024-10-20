@@ -50,6 +50,8 @@ public class WinApp extends JPanel
     public JFrame FRAME;
     public String TITLE = "No Name";
     public WinApp PANEL;
+    public WinApp PANEL2;
+    public WinApp PANEL3;
     public Dimension PREF_SIZE = new Dimension(UC.defaultScreenWidth,UC.defaultScreenHeight);
 
     public WinApp(String t, int width, int height){
@@ -62,16 +64,43 @@ public class WinApp extends JPanel
         this.FRAME = new JFrame(this.TITLE);
         this.FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.FRAME.addKeyListener(this.PANEL);
-        this.FRAME.getContentPane().add(this.PANEL);
+        this.FRAME.add(this.PANEL);
+//        changePanel();
         this.FRAME.pack();
         this.FRAME.setVisible(true);
+    }
+
+    public void cPTest2(WinApp newPanel){
+        this.FRAME.getContentPane().remove(0);
+        this.FRAME.addMouseListener(newPanel);
+        this.FRAME.getContentPane().add(newPanel);
+        this.FRAME.revalidate();
+        this.FRAME.repaint();
+    }
+    public void changePanel(){
+//        this.FRAME = new JFrame(this.TITLE);
+//        this.FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        this.FRAME.addKeyListener(this.PANEL);
+//        this.PANEL2.addMouseListener(PANEL2);
+//        this.PANEL2.addMouseMotionListener(PANEL2);
+
+        this.FRAME.getContentPane().remove(0);
+        this.FRAME.getContentPane().add(this.PANEL);
+//          this.FRAME.pack();
+//        this.FRAME.getContentPane().add(this.PANEL2);
+//        changePanel();
+        this.FRAME.revalidate();
+        this.FRAME.repaint();
+//        this.FRAME.setVisible(true);
+//        this.FRAME.getContentPane().remove(1);
+//        this.FRAME.pack();
+//        this.FRAME.setVisible(true);
     }
 
     public void launch(){
         // add in the listeners first
         this.PANEL.addMouseListener(PANEL); // mouseListeners added to panel
         this.PANEL.addMouseMotionListener(PANEL);
-
         javax.swing.SwingUtilities.invokeLater(
                 new Runnable(){ public void run(){createAndShowGUI();} }
         );
