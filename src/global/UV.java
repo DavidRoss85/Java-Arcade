@@ -1,6 +1,6 @@
 package global;
 
 public class UV {
-    public static int currentScreenWidth = UC.defaultScreenWidth;
-    public static int currentScreenHeight = UC.defaultScreenHeight;
+    public static int screenWidth = UC.defaultWidth;
+    public static int screenHeight = UC.defaultHeight;
 }

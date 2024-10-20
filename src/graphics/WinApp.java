@@ -1,58 +1,21 @@
 package graphics;
 
-import global.UC;
+/*This Class handles the window generation
+* The content inside the window is passed into using the
+* changePanel() method.
+* Initialize mainPanel to be able to call it at anytime
+* */
+
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class WinApp extends JPanel
-        implements MouseListener, MouseMotionListener, KeyListener {
-
-//    public static JFrame FRAME;
-//    public static JFrame FRAME2;
-//    public static String TITLE = "No Name";
-//    public static WinApp PANEL;
-//    public static Dimension PREF_SIZE = new Dimension(UC.defaultScreenWidth,UC.defaultScreenHeight);
-//
-//    public WinApp(String title, int width, int height){
-//        TITLE = title; PREF_SIZE = new Dimension(width,height);
-//    }
-//
-//    public Dimension getPreferredSize(){return PREF_SIZE;}
-//
-//    private static void createAndShowGUI(){
-//        FRAME = new JFrame(TITLE);
-//        FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        FRAME.addKeyListener(PANEL);
-//        FRAME.getContentPane().add(PANEL);
-//        FRAME.pack();
-//        FRAME.setVisible(true);
-//        FRAME2 = new JFrame(TITLE + " 2");
-//        FRAME2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        FRAME2.addKeyListener(PANEL);
-//        FRAME2.getContentPane().add(PANEL);
-//        FRAME2.pack();
-//        FRAME2.setVisible(true);
-//    }
-//
-//    public static void launch(){
-//        // add in the listeners first
-//        PANEL.addMouseListener(PANEL); // mouseListeners added to panel
-//        PANEL.addMouseMotionListener(PANEL);
-//
-//        javax.swing.SwingUtilities.invokeLater(
-//                new Runnable(){ public void run(){createAndShowGUI();} }
-//        );
-//    }
-
+public class WinApp extends JPanel {
 
     public JFrame FRAME;
-    public String TITLE = "No Name";
-    public WinApp PANEL;
-    public WinApp PANEL2;
-    public WinApp PANEL3;
-    public Dimension PREF_SIZE = new Dimension(UC.defaultScreenWidth,UC.defaultScreenHeight);
+    public String TITLE;
+    public Panel mainPanel;
+    public Dimension PREF_SIZE;
 
     public WinApp(String t, int width, int height){
         this.TITLE = t; PREF_SIZE = new Dimension(width,height);
@@ -63,96 +26,29 @@ public class WinApp extends JPanel
     private void createAndShowGUI(){
         this.FRAME = new JFrame(this.TITLE);
         this.FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.FRAME.addKeyListener(this.PANEL);
-        this.FRAME.add(this.PANEL);
-//        changePanel();
-        this.FRAME.pack();
+        this.mainPanel.addKeyListener(this.mainPanel);
+        this.FRAME.getContentPane().add(this.mainPanel);
+        this.FRAME.setSize(PREF_SIZE);
+        this.FRAME.setLocationRelativeTo(null);
+//        this.FRAME.pack();
         this.FRAME.setVisible(true);
     }
 
-    public void cPTest2(WinApp newPanel){
+    public void changePanel(Panel newPanel){
         this.FRAME.getContentPane().remove(0);
-        this.FRAME.addMouseListener(newPanel);
+        newPanel.addMouseListener(newPanel);
         this.FRAME.getContentPane().add(newPanel);
         this.FRAME.revalidate();
         this.FRAME.repaint();
     }
-    public void changePanel(){
-//        this.FRAME = new JFrame(this.TITLE);
-//        this.FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        this.FRAME.addKeyListener(this.PANEL);
-//        this.PANEL2.addMouseListener(PANEL2);
-//        this.PANEL2.addMouseMotionListener(PANEL2);
-
-        this.FRAME.getContentPane().remove(0);
-        this.FRAME.getContentPane().add(this.PANEL);
-//          this.FRAME.pack();
-//        this.FRAME.getContentPane().add(this.PANEL2);
-//        changePanel();
-        this.FRAME.revalidate();
-        this.FRAME.repaint();
-//        this.FRAME.setVisible(true);
-//        this.FRAME.getContentPane().remove(1);
-//        this.FRAME.pack();
-//        this.FRAME.setVisible(true);
-    }
 
     public void launch(){
         // add in the listeners first
-        this.PANEL.addMouseListener(PANEL); // mouseListeners added to panel
-        this.PANEL.addMouseMotionListener(PANEL);
+        this.mainPanel.addMouseListener(mainPanel); // mouseListeners added to panel
+        this.mainPanel.addMouseMotionListener(mainPanel);
         javax.swing.SwingUtilities.invokeLater(
-                new Runnable(){ public void run(){createAndShowGUI();} }
+                this::createAndShowGUI
         );
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {}
-    @Override
-    public void keyPressed(KeyEvent e) {}
-    @Override
-    public void keyReleased(KeyEvent e) {}
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-    @Override
-    public void mousePressed(MouseEvent e) {}
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-    @Override
-    public void mouseExited(MouseEvent e) {}
-    @Override
-    public void mouseDragged(MouseEvent e) {}
-    @Override
-    public void mouseMoved(MouseEvent e) {}
 }
-
-//public JFrame FRAME;
-//public String TITLE = "No Name";
-//public WinApp PANEL = new WinApp(this.TITLE,100,100);
-//public Dimension PREF_SIZE = new Dimension(UC.defaultScreenWidth,UC.defaultScreenHeight);
-//
-//public WinApp(String t, int width, int height){
-//    this.TITLE = t; PREF_SIZE = new Dimension(width,height);
-//}
-//
-//public Dimension getPreferredSize(){return PREF_SIZE;}
-//
-//private void createAndShowGUI(){
-//    this.FRAME = new JFrame(TITLE);
-//    this.FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//    this.FRAME.addKeyListener(PANEL);
-//    this.FRAME.pack();
-//    this.FRAME.setVisible(true);
-//}
-//
-//public void launch(){
-//    // add in the listeners first
-//    this.PANEL.addMouseListener(PANEL); // mouseListeners added to panel
-//    this.PANEL.addMouseMotionListener(PANEL);
-//
-//    javax.swing.SwingUtilities.invokeLater(
-//            new Runnable(){ public void run(){createAndShowGUI();} }
-//    );
-//}

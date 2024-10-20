@@ -1,25 +1,23 @@
 package sandbox;
 
 import graphics.G;
+import graphics.Panel;
 import graphics.WinApp;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class tContent1 extends WinApp {
+public class tContent1 extends Panel {
 
-    public WinApp myDaddy;
-    public WinApp content2;
+    public Panel content2;
 
-    public tContent1(WinApp daddy){
-        super("Content",1000,1000);
-        this.myDaddy=daddy;
-        content2= new tContent2(myDaddy);
+    public tContent1(WinApp parentWindow){
+        super(parentWindow);
+        content2= new tContent2(parentWindow);
     }
 
     public void mousePressed(MouseEvent me){
-        System.out.println("content 1 clicked");
-        myDaddy.cPTest2(content2);
+        parentWindow.changePanel(content2);
     }
 
     public void paintComponent(Graphics g){

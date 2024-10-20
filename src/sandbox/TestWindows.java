@@ -1,28 +1,27 @@
 package sandbox;
 
+import games.Collapse;
 import global.UV;
-import graphics.G;
+import graphics.Panel;
 import graphics.WinApp;
-import java.awt.*;
-import java.awt.event.MouseEvent;
+import menus.MainMenu;
 
 public class TestWindows extends WinApp{
     //Multiple windows test:
 
-    public static WinApp ourWindow ;
-    public static WinApp firstPanel;
-
+    public static WinApp thisWindow;
+    public static Panel firstPanel;
+    public static int W = UV.screenWidth, H= UV.screenHeight;
 
     public TestWindows(){
-        super("Test Windows", UV.currentScreenWidth,UV.currentScreenHeight);
-        System.out.println("Test Windows Loaded");
+        super("Main Window", W,H);
     }
 
 
     public static void main(String[] args){
-        ourWindow = new TestWindows();
-        firstPanel = new tMain(ourWindow);
-        ourWindow.PANEL = firstPanel;
-        ourWindow.launch();
+        thisWindow = new TestWindows();
+        firstPanel = new MainMenu(thisWindow);
+        thisWindow.mainPanel = firstPanel;
+        thisWindow.launch();
     }
 }
