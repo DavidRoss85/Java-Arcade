@@ -9,12 +9,21 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class Panel extends JPanel
-    implements MouseListener, MouseMotionListener, KeyListener{
+    implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener{
 
     public WinApp parentWindow; //The WinApp the panel is attached to
 
-    public Panel(WinApp parentWindow){
-        this.parentWindow=parentWindow;
+    public Panel(){
+        //Add listeners
+        this.addMouseListener(this);
+        this.addKeyListener(this);
+        this.addMouseMotionListener(this);
+        this.addMouseWheelListener(this);
+
+        //Set Focus
+        this.setFocusable(true);
+        this.requestFocusInWindow();
+        this.grabFocus();
     }
 
     @Override
@@ -37,4 +46,6 @@ public class Panel extends JPanel
     public void mouseDragged(MouseEvent e) {}
     @Override
     public void mouseMoved(MouseEvent e) {}
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {}
 }

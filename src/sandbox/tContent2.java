@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 public class tContent2 extends Panel {
 
     public tContent2(WinApp parentWindow){
-        super(parentWindow);
+        super();
     }
 
     public void mousePressed(MouseEvent me){

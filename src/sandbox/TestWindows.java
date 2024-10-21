@@ -1,16 +1,14 @@
 package sandbox;
 
-import games.Collapse;
+import games.tetris.TetrisBasic;
 import global.UV;
-import graphics.Panel;
+import graphics.G;
 import graphics.WinApp;
 import menus.MainMenu;
 
 public class TestWindows extends WinApp{
     //Multiple windows test:
 
-    public static WinApp thisWindow;
-    public static Panel firstPanel;
     public static int W = UV.screenWidth, H= UV.screenHeight;
 
     public TestWindows(){
@@ -19,9 +17,14 @@ public class TestWindows extends WinApp{
 
 
     public static void main(String[] args){
-        thisWindow = new TestWindows();
-        firstPanel = new MainMenu(thisWindow);
-        thisWindow.mainPanel = firstPanel;
-        thisWindow.launch();
+
+        UV.mainWindow = new TestWindows();
+
+        UV.mainMenuPanel = new MainMenu();
+
+        UV.mainWindow.mainPanel = UV.mainMenuPanel;
+        UV.mainWindow.launch();
+
+        UV.tetrisPanel=new TetrisBasic();
     }
 }

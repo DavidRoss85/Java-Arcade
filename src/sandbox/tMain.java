@@ -12,7 +12,7 @@ public class tMain extends Panel {
     public Panel content1;
 
     public tMain(WinApp parentWindow){
-        super(parentWindow);
+        super();
        content1 = new tContent1(parentWindow);
 
     }

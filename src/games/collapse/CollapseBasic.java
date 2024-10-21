@@ -1,6 +1,6 @@
-package games;
+package games.collapse;
 
-import global.UC;
+import global.UV;
 import graphics.G;
 import graphics.Panel;
 import graphics.WinApp;
@@ -9,23 +9,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-public class Collapse extends Panel implements ActionListener {
+public class CollapseBasic extends Panel implements ActionListener {
+
     public static final int nC = 13, nR =15;
     public static final int W = 60, H =40;
     public static int xM=100, yM=100;
-    public static Color[] color = {Color.BLUE,Color.CYAN,Color.GREEN,
+    public static Color[] color = {Color.LIGHT_GRAY,Color.CYAN,Color.GREEN,
             Color.YELLOW,Color.RED,Color.PINK};
     public static int[][] grid = new int[nC][nR];
     public static Timer timer;
     public static int nColor =3;
     public static int bricksRemaining;
 
-    public Collapse(WinApp parent){
-        super(parent);
+    public CollapseBasic(){
         startNewGame();
-        timer = new Timer(15,this);
+        timer = new Timer(20,this);
         timer.start();
     }
 
@@ -153,10 +154,6 @@ public class Collapse extends Panel implements ActionListener {
             for(int r=0;r<nR;r++){
                 g.setColor(color[grid[c][r]]);
                 g.fillRect(x(c),y(r),W,H);
-                if(grid[c][r]!=0){
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x(c),y(r),W,H);
-                }
             }
         }
 
@@ -177,5 +174,4 @@ public class Collapse extends Panel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         repaint();
     }
-
 }
