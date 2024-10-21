@@ -24,7 +24,7 @@ public class Tetris2 extends Panel implements ActionListener {
     public static final int LEVEL_THRESHOLD = 50000;
     public static final int LABEL_Y_OFFSET = 100;
     public static final int LABEL_X_OFFSET = 300;
-    public static final Color GAME_FONT_COLOR=Color.WHITE, GAME_LABEL_COLOR=Color.RED,LABEL_FONT_COLOR=Color.BLACK;
+    public static final Color GAME_FONT_COLOR=Color.WHITE, GAME_LABEL_COLOR=Color.RED,LABEL_FONT_COLOR=Color.WHITE;
     public static final Color LEVEL_WALL_COLOR=Color.DARK_GRAY, BREAKING_COLOR=Color.PINK;
 
     //Control Speed
@@ -102,9 +102,9 @@ public class Tetris2 extends Panel implements ActionListener {
                 }
                 unzapWell();
                 showWell(g);
+                showLabels(g);//Show score
                 shape.show(g);
                 nextShape.show(g);
-                showLabels(g);//Show score
                 //Placed under showWell for timing purposes
                 if(breakingBricks){
                     aniBreakFrame++;
@@ -127,6 +127,7 @@ public class Tetris2 extends Panel implements ActionListener {
         int fSize = 20;
         String gameObjective = challengeMode? "- Clear the gray blocks to advance": "- Score Challenge";
         Font gFont = new Font("Courier New",Font.BOLD,fSize);
+        G.clearScreen(g,xM+LABEL_X_OFFSET-5,yM+10-1,240,200,Color.BLACK);
         g.setColor(LABEL_FONT_COLOR);
         g.setFont(gFont);
         g.drawString("Level: " + levelMultiplier + " " + gameObjective,xM,yM-5);

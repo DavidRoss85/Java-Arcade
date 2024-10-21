@@ -22,6 +22,8 @@ public class UV {
     public static Panel tetrisPanel = new Tetris2();
     public static Panel collapsePanel = new Collapse2();
     public static Panel statPanel = new StatChecker();
+    public static Panel oldTetris = new TetrisBasic();
+    public static Panel oldCollapse = new CollapseBasic();
 
     public static G.BrickWall brickBackground = G.generateBrickWall(25,47);
 

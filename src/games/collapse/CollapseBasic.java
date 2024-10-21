@@ -27,7 +27,7 @@ public class CollapseBasic extends Panel implements ActionListener {
     public CollapseBasic(){
         startNewGame();
         timer = new Timer(20,this);
-        timer.start();
+//        timer.start();
     }
 
     public static void startNewGame(){
@@ -55,6 +55,7 @@ public class CollapseBasic extends Panel implements ActionListener {
     }
 
     public void mouseClicked(MouseEvent me){
+        timer.start();
         int x = me.getX(), y = me.getY();
         if(x<20&&y<20){startNewGame();}
         if(x < xM || y < yM){return;}
@@ -63,6 +64,16 @@ public class CollapseBasic extends Panel implements ActionListener {
             crAction(c,r);
         }
         repaint();
+    }
+    public void keyPressed(KeyEvent ke){
+        int vk = ke.getKeyCode();
+
+        if(vk==KeyEvent.VK_ESCAPE){
+            timer.stop();
+            UV.mainWindow.changePanel(UV.mainMenuPanel);
+        }else{
+            timer.start();
+        }
     }
 
     public static boolean noMorePlays(){
@@ -83,8 +94,8 @@ public class CollapseBasic extends Panel implements ActionListener {
         if( v==0){return false;}
         if(r>0){if(grid[c][r-1]== v){return true;}}
         if(c>0){if(grid[c-1][r]== v){return true;}}
-        if(r>nR-1){if(grid[c][r+1]== v){return true;}}
-        if(c>nC-1){if(grid[c+1][r]== v){return true;}}
+        if(r<nR-1){if(grid[c][r+1]== v){return true;}}
+        if(c<nC-1){if(grid[c+1][r]== v){return true;}}
         return false;
     }
 

@@ -28,15 +28,15 @@ public class MainMenu extends Panel implements ActionListener {
     public int textSize = UC.menuFontSize;
     public Color menuBackColor = UC.menuBackColor;
     public ArrayList<MenuItem> menuChoices = new ArrayList<>();
-    public int mnuX = 450, mnuY = 400;
+    public int mnuX = 400, mnuY = 400;
 
     public MainMenu(){
-        super();
         Font fontStyle = new Font("Courier New", Font.PLAIN,textSize);
-        menuChoices.add(new MenuItem("Tetris", mnuX,mnuY,fontStyle,UV.tetrisPanel));
-        menuChoices.add(new MenuItem("Collapse", mnuX,mnuY+10+textSize,fontStyle,UV.collapsePanel));
+        menuChoices.add(new MenuItem("Tetris II", mnuX,mnuY,fontStyle,UV.tetrisPanel));
+        menuChoices.add(new MenuItem("Collapse II", mnuX,mnuY+10+textSize,fontStyle,UV.collapsePanel));
         menuChoices.add(new MenuItem("Stats", mnuX,mnuY+((10+textSize)*2),fontStyle,UV.statPanel));
-
+        menuChoices.add(new MenuItem("Tetris I", mnuX,mnuY+((10+textSize)*3),fontStyle,UV.oldTetris));
+        menuChoices.add(new MenuItem("Collapse", mnuX,mnuY+((10+textSize)*4),fontStyle,UV.oldCollapse));
     }
 
     public void paintComponent(Graphics g){
@@ -148,7 +148,7 @@ public class MainMenu extends Panel implements ActionListener {
             if(highlighted){g.setColor(Color.RED);g.fillRect(left,top,width,height);}
             g.setColor(fontColor);
             g.setFont(font);
-            g.drawRect(left,top,width,height);
+//            g.drawRect(left,top,width,height);
             g.drawString(text,left,bottom);
         }
 
