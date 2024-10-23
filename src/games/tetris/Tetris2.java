@@ -42,7 +42,7 @@ public class Tetris2 extends Panel implements ActionListener {
     public static Shape nextShape;
     public static int nextShapeIndex = 0; //Using 2 different shape arrays for shape and next shape
     public static final int nXOffset = 12, nYOffset = 6;
-    public static final int SPECIAL_BLOCK_PERCENT = 20;
+    public static final int SPECIAL_BLOCK_PERCENT = 5;
 
     //****************************
 

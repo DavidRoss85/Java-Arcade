@@ -43,6 +43,11 @@ public class Collapse2 extends Panel implements ActionListener {
             nColor++;
         }
     }
+    public void lowerDifficulty(){
+        if(nColor>3){
+            nColor--;
+        }
+    }
     public void showRemaining(Graphics g){
         String str = "Bricks remaining: " + bricksRemaining;
         if(noMorePlays()){str += "No More Plays left!";}
@@ -71,6 +76,8 @@ public class Collapse2 extends Panel implements ActionListener {
         int vk= ke.getKeyCode();
 
         if(vk==KeyEvent.VK_R){startNewGame();}
+        if(vk==KeyEvent.VK_UP){raiseDifficulty();}
+        if(vk==KeyEvent.VK_DOWN){lowerDifficulty();}
         if(vk==KeyEvent.VK_ESCAPE){
             UV.mainWindow.changePanel(UV.mainMenuPanel);
             timer.stop();
