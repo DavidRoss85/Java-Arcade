@@ -5,6 +5,7 @@ import global.UV;
 import graphics.G;
 import graphics.I;
 import graphics.Panel;
+import sprites.Icons;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,8 +23,7 @@ public class MainMenu extends Panel implements ActionListener {
 
     //*******************************************************
 
-
-
+    public Icons.JavaCup javaCup = new Icons.JavaCup(200,200,100,100,Color.WHITE,Color.RED,Color.BLACK);
     public Color textColor = UC.menuFontColor;
     public int textSize = UC.menuFontSize;
     public Color menuBackColor = UC.menuBackColor;
@@ -31,6 +31,7 @@ public class MainMenu extends Panel implements ActionListener {
     public int mnuX = 400, mnuY = 400;
 
     public MainMenu(){
+
         Font fontStyle = new Font("Courier New", Font.PLAIN,textSize);
         menuChoices.add(new MenuItem("Tetris II", mnuX,mnuY,fontStyle,UV.tetrisPanel));
         menuChoices.add(new MenuItem("Collapse II", mnuX,mnuY+10+textSize,fontStyle,UV.collapsePanel));
@@ -41,6 +42,8 @@ public class MainMenu extends Panel implements ActionListener {
 
     public void paintComponent(Graphics g){
         G.clearScreen(g,menuBackColor);
+
+        showLogo(g,300,200,100,100);
         for(int n=0;n<menuChoices.size() ;n++){
             menuChoices.get(n).show(g);
         }
@@ -50,6 +53,18 @@ public class MainMenu extends Panel implements ActionListener {
             for (Point point : points) {g.fillOval(point.x, point.y, 5, 5);}
         }
         repaint();
+    }
+
+    public void showLogo(Graphics g,int x, int y, int w, int h){
+        Font logoFont = new Font("Courier New", Font.BOLD,40);
+
+        javaCup.x=x;
+        javaCup.y=y;
+        javaCup.show(g);
+
+        g.setColor(Color.WHITE);
+        g.setFont(logoFont);
+        g.drawString("Java Arcade",x+100,y+40);
     }
 
     public void mousePressed(MouseEvent me){
