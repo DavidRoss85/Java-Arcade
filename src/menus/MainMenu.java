@@ -43,7 +43,7 @@ public class MainMenu extends Panel implements ActionListener {
     public void paintComponent(Graphics g){
         G.clearScreen(g,menuBackColor);
 
-        showLogo(g,300,200,100,100);
+        showLogo(g,300,300,100,100);
         for(int n=0;n<menuChoices.size() ;n++){
             menuChoices.get(n).show(g);
         }
@@ -62,9 +62,9 @@ public class MainMenu extends Panel implements ActionListener {
         javaCup.y=y;
         javaCup.show(g);
 
-        g.setColor(Color.WHITE);
+        g.setColor(Color.RED);
         g.setFont(logoFont);
-        g.drawString("Java Arcade",x+100,y+40);
+        g.drawString("Java Arcade",x+105,y+60);
     }
 
     public void mousePressed(MouseEvent me){
