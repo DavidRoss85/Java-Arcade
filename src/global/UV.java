@@ -1,5 +1,7 @@
 package global;
 
+import javax.swing.*;
+
 import games.collapse.Collapse2;
 import games.collapse.CollapseBasic;
 import games.tetris.Tetris2;
@@ -11,9 +13,10 @@ import menus.MainMenu;
 import sandbox.StatChecker;
 import sandbox.TestWindows;
 
-import java.util.ArrayList;
-
 public class UV {
+    //Universal timer
+    public static Timer uTimer = new Timer(1,null);
+
     public static int screenWidth = UC.defaultWidth;
     public static int screenHeight = UC.defaultHeight;
 

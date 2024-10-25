@@ -21,20 +21,11 @@ public class StatChecker extends Panel implements ActionListener {
     int ticksPerSec = 0;
 
     public StatChecker(){
-        timer = new Timer(0,this);
+        UV.uTimer.addActionListener(this);
+//        timer = new Timer(0,this);
 //        timer.start();
     }
     public void paintComponent(Graphics g){
-
-
-        ticks++;
-        nowTime=System.currentTimeMillis();
-        if(nowTime>lastTime+1000){
-            lastTime=nowTime;
-            secondsElapsed++;
-             ticksPerSec = ticks/secondsElapsed;
-        }
-
         G.clearScreen(g);
         UV.brickBackground.show(g);
         Font gFont = new Font("Courier New",Font.BOLD,20);
@@ -44,20 +35,24 @@ public class StatChecker extends Panel implements ActionListener {
         g.drawString("Timer: " + secondsElapsed ,400,400);
         g.drawString("Time: " + nowTime ,400,420);
         g.drawString("Ticks/s: " + ticksPerSec ,400,440);
-        repaint();
     }
 
     public void keyPressed(KeyEvent ke){
         int vk= ke.getKeyCode();
 
         if(vk==KeyEvent.VK_ESCAPE){
-            UV.mainWindow.changePanel(UV.mainMenuPanel);timer.stop();
-        }else{
-            timer.start();
+            UV.mainWindow.changePanel(UV.mainMenuPanel);
         }
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        ticks++;
+        nowTime=System.currentTimeMillis();
+        if(nowTime>lastTime+1000){
+            lastTime=nowTime;
+            secondsElapsed++;
+            ticksPerSec = ticks/secondsElapsed;
+        }
+        repaint();
     }
 }

@@ -1,5 +1,6 @@
 package menus;
 
+import games.tetris.Tetris2;
 import global.UC;
 import global.UV;
 import graphics.G;
@@ -7,6 +8,7 @@ import graphics.I;
 import graphics.Panel;
 import sprites.Icons;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +22,7 @@ public class MainMenu extends Panel implements ActionListener {
     public int tempCount = 0 ;
     public Point testPoint;
     public ArrayList<Point> points = new ArrayList<>();
-
+    public int testVar;
     //*******************************************************
 
     public Icons.JavaCup javaCup = new Icons.JavaCup(200,200,100,100,Color.WHITE,Color.RED,Color.BLACK);
@@ -31,7 +33,8 @@ public class MainMenu extends Panel implements ActionListener {
     public int mnuX = 400, mnuY = 400;
 
     public MainMenu(){
-
+        UV.uTimer.addActionListener(this);
+        UV.uTimer.start();
         Font fontStyle = new Font("Courier New", Font.PLAIN,textSize);
         menuChoices.add(new MenuItem("Tetris II", mnuX,mnuY,fontStyle,UV.tetrisPanel));
         menuChoices.add(new MenuItem("Collapse II", mnuX,mnuY+10+textSize,fontStyle,UV.collapsePanel));
@@ -47,12 +50,15 @@ public class MainMenu extends Panel implements ActionListener {
         for(int n=0;n<menuChoices.size() ;n++){
             menuChoices.get(n).show(g);
         }
-        //testing
+        //testing*********************************
+        testVar++;
         g.setColor(textColor);
+        g.drawString(""+testVar,100,100);
         if(testPoint!=null) {
             for (Point point : points) {g.fillOval(point.x, point.y, 5, 5);}
         }
-        repaint();
+        //************************************************
+//        repaint();
     }
 
     public void showLogo(Graphics g,int x, int y, int w, int h){
@@ -69,6 +75,7 @@ public class MainMenu extends Panel implements ActionListener {
 
     public void mousePressed(MouseEvent me){
         //testing
+
         for(int n=0;n<menuChoices.size();n++){
             if(menuChoices.get(n).clicked(me.getX(),me.getY())){
                 UV.mainWindow.changePanel(menuChoices.get(n).pointsTo);
@@ -91,7 +98,7 @@ public class MainMenu extends Panel implements ActionListener {
     public void keyPressed(KeyEvent ke){
         int vk = ke.getKeyCode();
 
-        if(vk==KeyEvent.VK_1){UV.mainWindow.changePanel(UV.tetrisPanel);}
+        if(vk==KeyEvent.VK_1){UV.mainWindow.changePanel(new Tetris2());}
         if(vk==KeyEvent.VK_2){UV.mainWindow.changePanel(UV.collapsePanel);}
         if(vk==KeyEvent.VK_3 || vk==KeyEvent.VK_ENTER){UV.mainWindow.changePanel(UV.statPanel);}
 

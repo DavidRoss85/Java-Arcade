@@ -15,21 +15,24 @@ public class Collapse2 extends Panel implements ActionListener {
     public final int nC = 13, nR =15; //number of columns and rows
     public final int W = 60, H =40; //width and height of each block
     public int xM=100, yM=100; //margins for collapsing
-    public int bXM=100, bYM=100; //background margins for color
+    public int bXM=100, bYM=100; //background margins for colors
 
     public Color highlight = Color.ORANGE;
     public Color[] color = {Color.BLACK,Color.RED,Color.BLUE, Color.GREEN,Color.ORANGE,Color.CYAN,
             Color.YELLOW,Color.PINK,Color.MAGENTA};
     public int[][] grid = new int[nC][nR], gridOverlay = new int[nC][nR];
-    public Timer timer;
+    public int[] bottomRow = new int[nC];
+
+    public G.V cellClicked = new G.V(-1,-1);
     public int nColor =3;
     public int bricksRemaining;
+    public int tDelay = 5, time=0;
+    public boolean gameOver = false;
 
     public Collapse2(){
         super();
         startNewGame();
-        timer = new Timer(10,this);
-//        timer.start();
+        UV.uTimer.addActionListener(this);
     }
 
     public void startNewGame(){
@@ -68,8 +71,6 @@ public class Collapse2 extends Panel implements ActionListener {
 
         UV.brickBackground.show(g);
         showGrid(g);
-        bubble();
-        if(slideCol()){xM+=W/2;}
         showRemaining(g);
     }
     public void keyPressed(KeyEvent ke){
@@ -80,23 +81,23 @@ public class Collapse2 extends Panel implements ActionListener {
         if(vk==KeyEvent.VK_DOWN){lowerDifficulty();}
         if(vk==KeyEvent.VK_ESCAPE){
             UV.mainWindow.changePanel(UV.mainMenuPanel);
-            timer.stop();
-        }else{
-            timer.start();
         }
     }
-
-    public void mouseClicked(MouseEvent me){
-        timer.start();
+    public void mousePressed(MouseEvent me){
         int x = me.getX(), y = me.getY();
-//        if(x<20&&y<20){startNewGame();}
+        if(x < xM || y < yM){return;}
+        cellClicked.y = r(y); cellClicked.x = c(x);
+    }
+
+    public void mouseReleased(MouseEvent me){
+        int x = me.getX(), y = me.getY();
         if(x < xM || y < yM){return;}
         int r = r(y), c = c(x);
-        if(r<nR && c <nC){
+        if(r<nR && c <nC && cellClicked.x==c && cellClicked.y==r){
             clearOverlay();
             crAction(c,r);
         }
-//        repaint();
+        cellClicked.x=-1; cellClicked.y=-1;
     }
     public void mouseMoved(MouseEvent me){
         int x = me.getX(), y = me.getY();
@@ -108,8 +109,8 @@ public class Collapse2 extends Panel implements ActionListener {
                 crHighlight(c,r);
             }
         }
-//        repaint();
     }
+
     public void clearOverlay(){
         for(int nX=0; nX<nC;nX++){
             for(int nY=0; nY<nR;nY++){
@@ -177,9 +178,7 @@ public class Collapse2 extends Panel implements ActionListener {
                     grid[c][n]=grid[c][n-1];
                 }
                 grid[c][0]=tmp;
-
             }
-
         }
     }
 
@@ -190,10 +189,22 @@ public class Collapse2 extends Panel implements ActionListener {
         return true;
     }
 
-    public void swapCol(int c){ // c is not empty, c - 1 is empty
+    public void swapCol(int c1, int c2){ // swap column colors
         for(int r=0;r<nR;r++){
-            grid[c-1][r]=grid[c][r];
-            grid[c][r]=0;
+            int tmpCol = grid[c2][r];
+            grid[c2][r]=grid[c1][r];
+            grid[c1][r]=tmpCol;
+        }
+    }
+    public void squeezeCols(){
+        for(int c=1;c<nC/2;c++){
+            if(colIsEmpty(c)&&!colIsEmpty(c-1)){swapCol(c,c-1);}
+            if(colIsEmpty(nC-c-1)&&!colIsEmpty(nC-c)){swapCol(nC-c-1,nC-c);}
+        }
+        if(nC%2==1){
+            //Wierd integer math to swap the middle column if it's an odd number of columns
+            int x = (int)(Math.ceil(nC*.5));
+            if(colIsEmpty(x-1)&&!colIsEmpty(x)){swapCol(x-1,x);}
         }
     }
 
@@ -201,7 +212,7 @@ public class Collapse2 extends Panel implements ActionListener {
         boolean res = false;
         for(int c=1;c<nC;c++){
             if(colIsEmpty(c-1)&&!colIsEmpty(c)){
-                swapCol(c);
+                swapCol(c,c-1);
                 res=true;
             }
         }
@@ -213,6 +224,7 @@ public class Collapse2 extends Panel implements ActionListener {
             for(int r=0;r<nR;r++){
                 grid[c][r]= G.rnd(k);
             }
+            bottomRow[c]=0;
         }
     }
 
@@ -225,25 +237,49 @@ public class Collapse2 extends Panel implements ActionListener {
         for (int c=0; c<nC; c++){
             for(int r=0;r<nR;r++){
 
+                //Color grid
                 if(grid[c][r]!=0){
                     g.setColor(color[grid[c][r]]);
                     g.fillRect(x(c),y(r),W,H);
                     g.setColor(Color.BLACK);
                     g.drawRect(x(c),y(r),W,H);
                 }
+                //Color overlay for highlighting
                 if(gridOverlay[c][r]==1){
-//                    g.setColor(color[grid[c][r]]);
-//                    g.fillRect(x(c),y(r),W,H);
                     g.setColor(highlight);
                     g.fillRect(x(c),y(r),W,H);
                     g.setColor(new Color(255,215,0));
                     g.drawRect(x(c),y(r),W,H);
                 }
             }
+            //Color bottom Row:
+            g.setColor(color[bottomRow[c]]);
+            g.fillRect(bXM+c*W,bYM+nR*H,W,H);
+            g.setColor(Color.BLACK);
+            g.drawRect(bXM+c*W,bYM+nR*H,W,H);
         }
 
     }
+    public void addBlockToBottomRow(){
+        for(int i=0;i<bottomRow.length;i++){
+            if(bottomRow[i]==0){
+                bottomRow[i]=G.rnd(nColor);
+                return;
+            }
+        }
+        popBottomRow();
+    }
+    public void popBottomRow(){
+        for (int c=0; c<nC; c++) {
+            if(grid[c][0]!=0){gameOver=true;return;}
+            for (int r = 1; r < nR; r++) {
+                grid[c][r-1]=grid[c][r];
+            }
+            grid[c][nR-1]=bottomRow[c];
+            bottomRow[c]=0;
+        }
 
+    }
     public int x(int c){return xM + c * W;}
     public int y(int r){return yM + r * H;}
     private int c(int x){return (x-xM)/W;} //unsafe fixed in mouseClicked
@@ -251,6 +287,14 @@ public class Collapse2 extends Panel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        time++;
+        if(time>=tDelay){
+            addBlockToBottomRow();
+            time=0;
+        }
+        bubble();
+        squeezeCols();
+//        if(slideCol()){xM+=W/2;}
         repaint();
     }
 

@@ -4,16 +4,15 @@ import global.UV;
 import graphics.G;
 import graphics.Panel;
 
-import javax.swing.*;
-        import java.awt.*;
-        import java.awt.event.ActionEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class Tetris2 extends Panel implements ActionListener {
 
-    //********David Ross:*********
+
     //Add a Score
     public static int score = 0;
     public static int lastScore = 0;
@@ -44,17 +43,13 @@ public class Tetris2 extends Panel implements ActionListener {
     public static final int nXOffset = 12, nYOffset = 6;
     public static final int SPECIAL_BLOCK_PERCENT = 5;
 
-    //****************************
 
 
 
-    public Timer timer;
     public static final int xM = 50, yM = 100;
     public static final int H =20, W =10, C = 25;
     public static final int NUM_SHAPES = 7;
-    public static Color[] color = {Color.RED,Color.GREEN,Color.BLUE,Color.ORANGE,Color.CYAN,Color.YELLOW,Color.MAGENTA,Color.PINK,Color.LIGHT_GRAY,Color.BLACK,Color.BLACK,Color.BLACK};
-    public static Shape[] shapes = {Shape.Z,Shape.S,Shape.J, Shape.L,Shape.I,Shape.O,Shape.T,Shape.ONE};
-    public static Shape[] shapes2 = {Shape.Z2,Shape.S2,Shape.J2, Shape.L2,Shape.I2,Shape.O2,Shape.T2,Shape.ONE2};
+    public static Color[] colors = {Color.RED,Color.GREEN,Color.BLUE,Color.ORANGE,Color.CYAN,Color.YELLOW,Color.MAGENTA,Color.PINK,Color.LIGHT_GRAY,Color.BLACK,Color.BLACK,Color.BLACK};
     public static Shape shape;
     public static final int specialBlock=7, greyColor=8, iBkColor=9, zap=10, zapAnimate=11;
     public static int[][] well = new int[W][H];
@@ -62,18 +57,15 @@ public class Tetris2 extends Panel implements ActionListener {
     public Tetris2() {
         super();
         startNewGame(0);
-        timer = new Timer(0,  this);
-//        timer.start();
+        UV.uTimer.addActionListener(this);
     }
 
     public void startNewGame(int level){
 
         //Generate next shapes:
-        nextShapeIndex= G.rnd(NUM_SHAPES);
-        nextShape=shapes2[nextShapeIndex]; //Next shape
+        nextShape= Shape.createNewShape(G.rnd(NUM_SHAPES)); //Next shape
         nextShape.loc.set(nXOffset,nYOffset);
-        //nextShape.fakeShape=true;
-        shape=shapes[G.rnd(NUM_SHAPES)];
+        shape=Shape.createNewShape(G.rnd(NUM_SHAPES));
 
         //reset score:
         levelMultiplier=1;
@@ -92,38 +84,25 @@ public class Tetris2 extends Panel implements ActionListener {
 
 
     public void paintComponent(Graphics g){
-        if(!gameIsOver){
-            if(!gamePaused){
-                UV.brickBackground.show(g); //clears the screen
-                if(!breakingBricks && !advancingLevel){ //Ensure no actions while animations occurring
-
-                    inputDelay++;inputDelay=registerPlayerInput(inputDelay,MAX_INPUT_DELAY); //Player input will reset the delay timer
-                    time++;if(time>=gameDelay){time=0;shape.drop();} //Controls the speed of the game
-                }
-                unzapWell();
-                showWell(g);
-                showLabels(g);//Show score
-                shape.show(g);
-                nextShape.show(g);
-                //Placed under showWell for timing purposes
-                if(breakingBricks){
-                    aniBreakFrame++;
-                    aniBreakFrame = animateZapWell(g,aniBreakFrame);
-                }else if(advancingLevel){
-                    aniLevelUpFrame++;
-                    aniLevelUpFrame = animateLevelUp(g,aniLevelUpFrame);
-                    showGameMessage(g, new String[] {" LEVEL UP", "     Next: " + levelMultiplier},45,25);
-                }
-            }else{
-                showGameMessage(g, new String[] {" GAME PAUSED", " PRESS ENTER KEY"},33,25);
+        int x;
+        UV.brickBackground.show(g); //clears the screen
+        unzapWell();
+        showWell(g);
+        showLabels(g);//Show score
+        shape.show(g);
+        nextShape.show(g);
+        if(!gameIsOver && !gamePaused){
+            if(breakingBricks){
+                animateZapWell(g);
+            }else if(advancingLevel){
+                animateLevelUp(g);
             }
-        }else {
-            showGameMessage(g, new String [] {"GAME OVER"," PRESS ENTER KEY"},45,25);
         }
+        handleMessageDisplay(g);
     }
 
-    //********David Ross:*********
     public void showLabels(Graphics g){
+        //Normal Labels:
         int fSize = 20;
         String gameObjective = challengeMode? "- Clear the gray blocks to advance": "- Score Challenge";
         Font gFont = new Font("Courier New",Font.BOLD,fSize);
@@ -135,7 +114,18 @@ public class Tetris2 extends Panel implements ActionListener {
         g.drawString("Drop multiplier x" + scoreMultiplier,xM+LABEL_X_OFFSET,yM+LABEL_Y_OFFSET-fSize-10);
         g.drawString("Score: " + score,xM+LABEL_X_OFFSET,yM+LABEL_Y_OFFSET);
         g.drawString("Next Shape: ",xM+LABEL_X_OFFSET,yM+LABEL_Y_OFFSET+fSize+10);
+
     }
+    public void handleMessageDisplay(Graphics g){
+        if(gameIsOver){
+            showGameMessage(g, new String [] {"GAME OVER"," PRESS ENTER KEY"},45,25);
+        }else if(gamePaused){
+            showGameMessage(g, new String[] {" GAME PAUSED", " PRESS ENTER KEY"},33,25);
+        }else if(advancingLevel && !breakingBricks){
+            showGameMessage(g, new String[] {" LEVEL UP", "     Next: " + levelMultiplier},45,25);
+        }
+    }
+
     public void showGameMessage(Graphics g, String[] message,int size1, int size2){
         g.setColor(GAME_LABEL_COLOR);
         g.fillRect(xM,yM+200,W*C,65);
@@ -177,7 +167,6 @@ public class Tetris2 extends Panel implements ActionListener {
         }
     }
 
-    //****************************
 
     public static void clearWell(){
         for(int x=0;x<W;x++){
@@ -190,11 +179,11 @@ public class Tetris2 extends Panel implements ActionListener {
         for(int x=0;x<W;x++){
             for(int y=0;y<H;y++){
                 int xx = xM + C*x, yy= yM + C*y;
-                //Blink color if it is a special block
+                //Blink colors if it is a special block
                 if(well[x][y]==specialBlock){
-                    g.setColor(color[G.rnd(7)]);
+                    g.setColor(colors[G.rnd(7)]);
                 }else{
-                    g.setColor(color[well[x][y]]);
+                    g.setColor(colors[well[x][y]]);
                 }
                 g.fillRect(xx,yy,C,C);
                 g.setColor(Color.BLACK);
@@ -208,7 +197,7 @@ public class Tetris2 extends Panel implements ActionListener {
         for(int y=0;y<H;y++){
             rowsZapped += zapRow(y); //Count number of rows zapped
         }
-        //****David Ross****
+
         if(rowsZapped==0) {
             lineMultiplier = 0;
         }else{
@@ -218,7 +207,7 @@ public class Tetris2 extends Panel implements ActionListener {
         }
         scoreMultiplier=1; //reset the bonus for pressing the down key
         checkLevel(); //Check the score and increase difficulty
-        //******************
+
     }
 
     public static int zapAbove(int y){
@@ -236,7 +225,7 @@ public class Tetris2 extends Panel implements ActionListener {
     }
     public static int zapRow(int y){
         int numZapped = 0;
-        boolean specBlockHit = false; //tracks if a special color was tetrised
+        boolean specBlockHit = false; //tracks if a special colors was tetrised
 
         for(int x=0;x<W;x++){
             if(well[x][y]==specialBlock){specBlockHit=true;}
@@ -270,7 +259,28 @@ public class Tetris2 extends Panel implements ActionListener {
             }
         }
     }
-    //******************David Ross******************************
+
+    public static void dropNewShape(){
+        int specialBlockDice =0;
+        score+= levelMultiplier*scoreMultiplier*POINT_VALUE;
+        scoreMultiplier=1;
+        shape=Shape.createNewShape(nextShape.shapeID);
+        if(explosiveMode){
+            shape.iColor=specialBlock;
+        }else{
+            shape.iColor= shape.shapeID;
+        }
+        shape.loc.set(4,0);
+        dnPressed=false;
+
+        specialBlockDice=G.rnd(100);
+        if(specialBlockDice<= SPECIAL_BLOCK_PERCENT){
+            nextShape= Shape.createNewShape(7);
+        }else{
+            nextShape= Shape.createNewShape(G.rnd(NUM_SHAPES));
+        }
+        nextShape.loc.set(nXOffset,nYOffset);
+    }
     public static boolean checkForGrey(){
         for(int y=0;y<H;y++){
             for(int x=0;x<W;x++){
@@ -280,9 +290,11 @@ public class Tetris2 extends Panel implements ActionListener {
         return false;
     }
 
-    public int animateLevelUp(Graphics g,int frame){
+    public void animateLevelUp(Graphics g){
+        aniLevelUpFrame++;
+
         int aniFactor = 5;
-        int deltaY = frame * aniFactor;
+        int deltaY = aniLevelUpFrame * aniFactor;
         int pxHeight = H*C;
         int moveFactor = deltaY%pxHeight;
         if(deltaY>=pxHeight) {
@@ -295,7 +307,7 @@ public class Tetris2 extends Panel implements ActionListener {
             }
             if(pxHeight-moveFactor<=aniFactor){
                 advancingLevel=false;
-                return 0;
+                aniLevelUpFrame=0;
             }
 
             moveFactor=pxHeight-moveFactor;
@@ -303,18 +315,17 @@ public class Tetris2 extends Panel implements ActionListener {
         g.setColor(LEVEL_WALL_COLOR);
         g.fillRect(xM,yM+(pxHeight - moveFactor),W*C,moveFactor);
 
-        return frame;
     }
-    public static int animateZapWell(Graphics g,int frame){
+    public static void animateZapWell(Graphics g){
+        aniBreakFrame++;
         for(int y=0;y<H;y++){
-            animateBreaking(g,frame,y);
+            animateBreaking(g,aniBreakFrame,y);
         }
-        if(frame>C*2){
+        if(aniBreakFrame>C*2){
             for(int y=0;y<H;y++){
                 finishAnimateZapRow(y);}
-            frame=0;
+            aniBreakFrame=0;
         }
-        return frame;
     }
     public static void animateBreaking(Graphics g, int f, int y){
         for(int x=0;x<W;x++){if(well[x][y]!=zapAnimate){return;}}
@@ -332,17 +343,16 @@ public class Tetris2 extends Panel implements ActionListener {
         breakingBricks=false;
     }
 
-    public static int registerPlayerInput(int delay, int max){
-        if(delay>max){
-            if(lfPressed){shape.slide(G.LEFT);delay=0;}
-            if(rtPressed){shape.slide(G.RIGHT);delay=0;}
-            if(delay>max*3){if(upPressed||spcPressed){shape.safeRot();delay=0;}}
+    public static void registerPlayerInput(){
+        inputDelay++;
+        if(inputDelay>MAX_INPUT_DELAY){
+            if(lfPressed){shape.slide(G.LEFT);inputDelay=0;}
+            if(rtPressed){shape.slide(G.RIGHT);inputDelay=0;}
+            if(inputDelay>MAX_INPUT_DELAY*2){if(upPressed||spcPressed){shape.safeRot();inputDelay=0;}}
         }
         if(dnPressed){shape.drop();}
-        return delay;
     }
-    //***************************************************
-    @Override
+
     public void keyPressed(KeyEvent ke){
 
         int vk = ke.getKeyCode();
@@ -364,14 +374,10 @@ public class Tetris2 extends Panel implements ActionListener {
         }
         if(vk==KeyEvent.VK_ESCAPE){
             UV.mainWindow.changePanel(UV.mainMenuPanel);
-            timer.stop();
-        }else{
-            timer.start();
         }
 
 
     }
-
     public void keyReleased(KeyEvent ke){
 
         int vk = ke.getKeyCode();
@@ -383,61 +389,43 @@ public class Tetris2 extends Panel implements ActionListener {
     }
     public void mousePressed(MouseEvent me){
         if(gameIsOver){startNewGame(0);}
-        timer.start();
     }
 
     @Override
-    public void actionPerformed(ActionEvent e){repaint();}
+    public void actionPerformed(ActionEvent e){
+        if(!gameIsOver && !gamePaused && !breakingBricks && !advancingLevel) {//Ensure no actions while animations occurring
+            registerPlayerInput(); //Player input will reset the delay timer
+            time++;
+            if (time >= gameDelay) { //Controls the speed of the game
+                time = 0;
+                shape.drop();
+            }
+        }
+        repaint();
+    }
 
-//    public static void main(String[] args){
-//        PANEL=new Tetris();
-//        WinApp.launch();
-//    }
 
     //------------------SHAPE----------------------
     public static class Shape{
-        public static Shape Z, S, J, L, I, O, T,Z2, S2, J2, L2, I2, O2, T2, ONE, ONE2;
-
-        //********David Ross:*********
-        //Fake shapes are not copied to well
-//        public boolean fakeShape = false;
-        //****************************
 
         public G.V[] a = new G.V[4];
         public int iColor;
         public G.V loc = new G.V(4,0);
+        public int shapeID;
+        private static Color[] colors ={Color.RED,Color.GREEN,Color.BLUE,Color.ORANGE,
+                Color.CYAN,Color.YELLOW,Color.MAGENTA,Color.PINK,Color.LIGHT_GRAY,
+                Color.BLACK,Color.BLACK,Color.BLACK};
+        private static final int[][] shapeConfigurations = {
+                {0,0, 1,0, 1,1, 2,1}, //Z
+                {0,1, 1,0, 1,1, 2,0}, //S
+                {0,0, 0,1, 1,1, 2,1}, //J
+                {0,1, 1,1, 2,1, 2,0}, //L
+                {0,0, 1,0, 2,0, 3,0}, //I
+                {0,0, 1,0, 0,1, 1,1}, //O
+                {0,1, 1,0, 1,1, 2,1}, //T
+                {0,0, 0,0, 0,0, 0,0}  //square
+        };
 
-        static {
-            Z=new Shape(new int[] {0,0, 1,0, 1,1, 2,1},0);
-            S=new Shape(new int[] {0,1, 1,0, 1,1, 2,0},1);
-            J=new Shape(new int[] {0,0, 0,1, 1,1, 2,1},2);
-            L=new Shape(new int[] {0,1, 1,1, 2,1, 2,0},3);
-            I=new Shape(new int[] {0,0, 1,0, 2,0, 3,0},4);
-            O=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},5);
-            T=new Shape(new int[] {0,1, 1,0, 1,1, 2,1},6);
-
-            //Shapes for next shape. These are not copied to well
-            Z2=new Shape(new int[] {0,0, 1,0, 1,1, 2,1},0);
-            S2=new Shape(new int[] {0,1, 1,0, 1,1, 2,0},1);
-            J2=new Shape(new int[] {0,0, 0,1, 1,1, 2,1},2);
-            L2=new Shape(new int[] {0,1, 1,1, 2,1, 2,0},3);
-            I2=new Shape(new int[] {0,0, 1,0, 2,0, 3,0},4);
-            O2=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},5);
-            T2=new Shape(new int[] {0,1, 1,0, 1,1, 2,1},6);
-
-            //Special Blocks:
-            ONE=new Shape(new int[] {0,0, 0,0, 0,0, 0,0},specialBlock);
-            ONE2=new Shape(new int[] {0,0, 0,0, 0,0, 0,0},specialBlock);
-
-            //Just O blocks for Testing:
-            /*Z=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},0);
-            S=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},1);
-            J=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},2);
-            L=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},3);
-            I=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},4);
-            O=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},5);
-            T=new Shape(new int[] {0,0, 1,0, 0,1, 1,1},6);*/
-        }
 
         public static G.V temp = new G.V(0,0);
 
@@ -448,11 +436,19 @@ public class Tetris2 extends Panel implements ActionListener {
             }
         }
 
+        public static Shape createNewShape(int iShape){
+            Shape tmpShape = new Shape(shapeConfigurations[iShape],iShape);
+            tmpShape.shapeID=iShape;
+            return tmpShape;
+        }
+        public static void assignColors(Color[] cList){ //In case you want to change the color array
+            System.arraycopy(cList, 0, colors, 0, cList.length);
+        }
         public void show(Graphics g){
             if(iColor==specialBlock){
-                g.setColor(color[G.rnd(6)]);
+                g.setColor(colors[G.rnd(6)]);
             }else{
-                g.setColor(color[iColor]);
+                g.setColor(colors[iColor]);
             }
             for(int i = 0; i < 4; i++){g.fillRect(x(i),y(i),C,C);}
             g.setColor(Color.BLACK);
@@ -500,38 +496,14 @@ public class Tetris2 extends Panel implements ActionListener {
         }
 
         public void copyToWell(){
-//            if(!this.fakeShape) {
             for (int i = 0; i < 4; i++) {
                 well[a[i].x + loc.x][a[i].y + loc.y] = iColor;
             }
-//            }
         }
-        public static void dropNewShape(){
-            int specialBlockDice =0;
-            score+= levelMultiplier*scoreMultiplier*POINT_VALUE;
-            scoreMultiplier=1;
-            shape=shapes[nextShapeIndex];
-            if(explosiveMode){
-                shape.iColor=specialBlock;
-            }else{
-                shape.iColor=nextShapeIndex;
-            }
-            shape.loc.set(4,0);
-            //shape.fakeShape=false;
-            dnPressed=false;
 
-            specialBlockDice=G.rnd(100);
-            if(specialBlockDice<= SPECIAL_BLOCK_PERCENT){
-                nextShapeIndex = 7;
-            }else{
-                nextShapeIndex= G.rnd(NUM_SHAPES);
-            }
-            nextShape= shapes2[nextShapeIndex];
-            //nextShape.fakeShape=true;
-            nextShape.loc.set(nXOffset,nYOffset); //Created boolean "fakeShape" to prevent copying to well with out-of-bounds index
-        }
 
         public static Shape cds = new Shape(new int[] {0,0, 0,0, 0,0, 0,0}, 0);
+
         public static boolean collisionDetected (){
             for(int i = 0; i<4; i++){
                 G.V v = cds.a[i];
