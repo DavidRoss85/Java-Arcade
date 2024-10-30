@@ -18,6 +18,8 @@ public class MidiPlayerTest2 {
         int note = in.nextInt();
 
         player.setUpPlayer(instrument, note);
+
+
     }
 
     public void setUpPlayer(int instrument, int note)
@@ -37,7 +39,7 @@ public class MidiPlayerTest2 {
             track.add(makeEvent(144, 1, note, 100, 1));
 
             // Add a note off event with specified note
-            track.add(makeEvent(128, 1, note, 100, 4));
+            track.add(makeEvent(128, 1, note, 100, 20));
 
             sequencer.setSequence(sequence);
             sequencer.start();

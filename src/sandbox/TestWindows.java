@@ -25,6 +25,6 @@ public class TestWindows extends WinApp{
         UV.mainWindow.mainPanel = UV.mainMenuPanel;
         UV.mainWindow.launch();
 
-        UV.tetrisPanel=new TetrisBasic();
+//        UV.tetrisPanel=new TetrisBasic();
     }
 }
