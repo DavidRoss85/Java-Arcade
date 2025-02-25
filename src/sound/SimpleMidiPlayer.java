@@ -17,6 +17,13 @@ public class SimpleMidiPlayer {
     private Sequence sequence;
     private Track track;
 
+    /**
+     * Constructor for SimpleMidiPlayer
+     * @param instrument instrument code
+     * @param timing in PPQ (Pulses per Quarter note)
+     * @throws MidiUnavailableException
+     * @throws InvalidMidiDataException
+     */
     public SimpleMidiPlayer(int instrument,int timing) throws MidiUnavailableException, InvalidMidiDataException {
         this.instrument=instrument;
         try{
